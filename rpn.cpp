@@ -144,14 +144,7 @@ bool isRuleChar(char c)
     return ret;
 }
 
-void RPN( const string& rule, vector<Symbol>& rpn )
-{
-    vector<string> vec;
-    RPN(rule, vec, rpn);
-}
-
 void RPN( const string& rule,
-          vector<string>& vec,
           vector<Symbol>& rpn )
 {
     std::queue<string> oq;
@@ -190,36 +183,10 @@ void RPN( const string& rule,
 
     while(!copyQ.empty()) {
         std::cout << copyQ.front() << " ";
-        vec.push_back(copyQ.front());
         Symbol s = Symbol(copyQ.front());
         rpn.push_back(s);
         copyQ.pop();
     }
-}
-
-bool EvaluateRPNOLD(std::map<std::string,bool> values,
-                    std::vector<std::string>& vec)
-{
-    string operand1, operand2;
-
-    stack<string> execStack;
-
-    for(int i = 0; i < vec.size(); ++i) {
-        string tok = vec[i];
-        if (isRuleID(tok)) {
-            execStack.push(tok);
-        } else if (isOperator(tok)) {
-            operand1 = execStack.top();
-            execStack.pop();
-            operand2 = execStack.top();
-            execStack.pop();
-            string res = evaluate(values, operand1, operand2, tok);
-            execStack.push(res);
-        }
-    }
-    cout << "execStack.front = " << execStack.top() << endl;
-
-    return execStack.top() == "1" ? true : false;
 }
 
 bool EvaluateRPN(const RulesTriggered& rt, 

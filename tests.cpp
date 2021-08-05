@@ -16,9 +16,8 @@ bool Test( std::string rule,
            std::map<std::string,bool> rulesTriggered,
            bool expected )
 {
-    std::vector<std::string> vec;
     std::vector<Symbol> rpn;
-    RPN(rule, vec, rpn);
+    RPN(rule, rpn);
     RulesTriggered rulesT(rulesTriggered);
     return(expected == EvaluateRPN(rulesT, rpn));
 }
