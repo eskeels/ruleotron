@@ -72,6 +72,29 @@ void TestAnd()
     ASSERT(Test("A&B",{{"A",true},{"B",false}},false));
     ASSERT(Test("A&B",{{"A",false},{"B",true}},false));
     ASSERT(Test("A&B",{{"A",false},{"B",false}},false));
+    ASSERT(Test("A&B&C&D&E",{{"A",false},
+                             {"B",false},
+                             {"C",false},
+                             {"D",false},
+                             {"E",false} },false));
+
+    ASSERT(Test("A&B&C&D&E",{{"A",true},
+                             {"B",true},
+                             {"C",true},
+                             {"D",true},
+                             {"E",true} },true));
+
+    ASSERT(Test("A&B&C&D&E",{{"A",false},
+                             {"B",true},
+                             {"C",true},
+                             {"D",true},
+                             {"E",true} },false));
+
+    ASSERT(Test("A&B&C&D&E",{{"A",true},
+                             {"B",true},
+                             {"C",true},
+                             {"D",true},
+                             {"E",false} },false));
 }
 
 void TestAndWithNot()
@@ -96,6 +119,7 @@ void TestAndWithNot()
 void TestOr()
 {
     std::cout << __func__ << std::endl;
+    ASSERT(Test("A|A",{{"A",true}},true));
     ASSERT(Test("A|B",{{"A",true},{"B",true}},true));
     ASSERT(Test("A|B",{{"A",true},{"B",false}},true));
     ASSERT(Test("A|B",{{"A",false},{"B",true}},true));
@@ -105,6 +129,33 @@ void TestOr()
     ASSERT(Test("A|B|C",{{"A",false},{"B",true},{"C",false}},true));
     ASSERT(Test("A|B|C",{{"A",false},{"B",false},{"C",true}},true));
     ASSERT(Test("A|B|C",{{"A",false},{"B",false},{"C",false}},false));
+    ASSERT(Test("A|B|C|D|E|F",{{"A",false},
+                               {"B",false},
+                               {"C",false},
+                               {"D",false},
+                               {"E",false},
+                               {"F",false}},false));
+
+    ASSERT(Test("A|B|C|D|E|F",{{"A",true},
+                               {"B",false},
+                               {"C",false},
+                               {"D",false},
+                               {"E",false},
+                               {"F",false}},true));
+
+    ASSERT(Test("A|B|C|D|E|F",{{"A",false},
+                               {"B",false},
+                               {"C",false},
+                               {"D",false},
+                               {"E",false},
+                               {"F",true}},true));
+
+    ASSERT(Test("A|B|C|D|E|F",{{"A",true},
+                               {"B",true},
+                               {"C",true},
+                               {"D",true},
+                               {"E",true},
+                               {"F",true}},true));
 }
 
 void TestOrWithAnd()
