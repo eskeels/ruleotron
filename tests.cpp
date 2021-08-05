@@ -1,4 +1,5 @@
 #include "rpn.h"
+#include "tests.h"
 
 void Assert(bool b, const char* file, int line)
 {
@@ -19,7 +20,6 @@ bool Test( std::string rule,
     std::vector<Symbol> rpn;
     RPN(rule, vec, rpn);
     RulesTriggered rulesT(rulesTriggered);
-    ASSERT(expected == EvaluateRPNOLD(rulesTriggered, vec));
     return(expected == EvaluateRPN(rulesT, rpn));
 }
 
@@ -95,11 +95,27 @@ void TestAnd()
                              {"C",true},
                              {"D",true},
                              {"E",false} },false));
+
+    ASSERT(Test("10&11",{{"10",true},{"11",false}}, false));
+    ASSERT(Test("10&11",{{"10",true},{"11",true}}, true));
+
+    ASSERT(Test("10&11&101&110&111",{{"10",true},
+                                     {"11",true},
+                                     {"101",true},
+                                     {"110",true},
+                                     {"111",true} }, true));
+
+    ASSERT(Test("10&11&101&110&111",{{"10",true},
+                                     {"11",true},
+                                     {"101",false},
+                                     {"110",true},
+                                     {"111",true} }, false));
 }
 
-void TestAndWithNot()
+void TestAndWithOperandNot()
 {
     std::cout << __func__ << std::endl;
+    // Operand NOT
     ASSERT(Test("A&!B",{{"A",true},{"B",true}},false));
     ASSERT(Test("A&!B",{{"A",true},{"B",false}},true));
     ASSERT(Test("A&!B",{{"A",false},{"B",true}},false));
@@ -158,6 +174,49 @@ void TestOr()
                                {"F",true}},true));
 }
 
+void TestOrWithOperandNot()
+{
+    std::cout << __func__ << std::endl;
+    ASSERT(Test("A|!A",{{"A",true}},true));
+    ASSERT(Test("A|!B",{{"A",true},{"B",true}},true));
+    ASSERT(Test("A|!B",{{"A",true},{"B",false}},true));
+    ASSERT(Test("!A|B",{{"A",false},{"B",true}},true));
+    ASSERT(Test("!A|B",{{"A",false},{"B",false}},true));
+    ASSERT(Test("!A|B|C",{{"A",true},{"B",true},{"C",true}},true));
+    ASSERT(Test("A|!B|C",{{"A",true},{"B",false},{"C",false}},true));
+    ASSERT(Test("A|B|!C",{{"A",false},{"B",true},{"C",false}},true));
+    ASSERT(Test("!A|!B|!C",{{"A",false},{"B",false},{"C",true}},true));
+    ASSERT(Test("!A|!B|!C",{{"A",true},{"B",true},{"C",true}},false));
+    ASSERT(Test("A|B|!C",{{"A",false},{"B",false},{"C",false}},true));
+    ASSERT(Test("!A|B|C|D|E|F",{{"A",false},
+                               {"B",false},
+                               {"C",false},
+                               {"D",false},
+                               {"E",false},
+                               {"F",false}},true));
+
+    ASSERT(Test("A|B|C|D|E|!F",{{"A",false},
+                               {"B",false},
+                               {"C",false},
+                               {"D",false},
+                               {"E",false},
+                               {"F",false}},true));
+
+    ASSERT(Test("!A|!B|!C|!D|!E|!F",{{"A",false},
+                               {"B",false},
+                               {"C",false},
+                               {"D",false},
+                               {"E",false},
+                               {"F",false}},true));
+
+    ASSERT(Test("!A|!B|!C|!D|!E|!F",{{"A",true},
+                               {"B",true},
+                               {"C",true},
+                               {"D",true},
+                               {"E",true},
+                               {"F",true}},false));
+}
+
 void TestOrWithAnd()
 {
     std::cout << __func__ << std::endl;
@@ -166,7 +225,29 @@ void TestOrWithAnd()
     ASSERT(Test("(A|B)&(C|B)",{{"A",true},{"B",false},{"C",true}},true));
     ASSERT(Test("(A|B)&(C|B)",{{"A",false},{"B",true},{"C",true}},true));
     ASSERT(Test("(A|B)&(C|B)",{{"A",false},{"B",false},{"C",true}},false));
-
-    std::cout << "SIZE IS " << sizeof(Symbol) << std::endl;
 }
- 
+
+void TestUnaryNot()
+{
+    ASSERT(Test("~(A&B)",{{"A",true},{"B",true}},false));
+    ASSERT(Test("~(A&B)",{{"A",false},{"B",true}},true));
+    ASSERT(Test("~(A&B)",{{"A",true},{"B",false}},true));
+    ASSERT(Test("~(A&B)",{{"A",false},{"B",false}},true));
+
+    ASSERT(Test("~(A|B)",{{"A",true},{"B",true}},false));
+    ASSERT(Test("~(A|B)",{{"A",false},{"B",true}},false));
+    ASSERT(Test("~(A|B)",{{"A",true},{"B",false}},false));
+    ASSERT(Test("~(A|B)",{{"A",false},{"B",false}},true));
+
+    ASSERT(Test("~((A|B)|C)",{{"A",true},{"B",true},{"C",true}},false));
+    ASSERT(Test("~((A|B)&C)",{{"A",true},{"B",true},{"C",true}},false));
+    ASSERT(Test("~((A|B)&C)",{{"A",true},{"B",true},{"C",false}},true));
+    // No operator precedense so () needed after ~
+    ASSERT(Test("(~(A&B))|(~(C&D))",{{"A",true},
+                                     {"B",true},
+                                     {"C",false},
+                                     {"D",false}},
+                                     true));
+    // Not really the intended use but works
+    ASSERT(Test("~A|~B",{{"A",true},{"B",true}},false));
+}

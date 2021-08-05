@@ -6,9 +6,11 @@
 void TestRPN();
 void TestNew();
 void TestAnd();
-void TestAndWithNot();
+void TestAndWithOperandNot();
 void TestOr();
+void TestOrWithOperandNot();
 void TestOrWithAnd();
+void TestUnaryNot();
 void Test3();
 void Test4();
 void Test5();

@@ -9,7 +9,7 @@ class Symbol
 {
     public:
         enum STYPE {
-            Operand, NotOperand, TrueValue, FalseValue, Or, And, Xor
+            Operand, NotOperand, NotOperator, TrueValue, FalseValue, Or, And, Xor
         };
 
         void dump(std::stringstream& ss) const
@@ -21,6 +21,9 @@ class Symbol
                     break;
                 case NotOperand:
                     ss << "Not Operand " << GetRuleId();
+                    break;
+                case NotOperator:
+                    ss << "Not";
                     break;
                 case TrueValue:
                     ss << "True";
@@ -60,6 +63,8 @@ class Symbol
                 mType = STYPE::And;
             } else if (val == "^") {
                 mType = STYPE::Xor;
+            } else if (val == "~") {
+                mType = STYPE::NotOperator;
             } else if (val[0] == '!') {
                 mType = STYPE::NotOperand;
                 val.erase(0,1);
@@ -87,11 +92,31 @@ class Symbol
             }
             return Symbol(false);
         }
+
+        Symbol Evaluate(bool bOp1)
+        {
+            switch(mType)
+            {
+                case STYPE::NotOperator:
+                    return Symbol(!bOp1);
+            }
+            return Symbol(false);
+        }
+
         bool IsOperator() const
         {
             if (mType == Or ||
                 mType == And ||
-                mType == Xor)
+                mType == Xor ||
+                mType == NotOperator)
+            {
+                return true;
+            }
+            return false;
+        }
+        bool IsUnaryOperator() const
+        {
+            if (IsOperator() && mType == NotOperator)
             {
                 return true;
             }

@@ -9,7 +9,8 @@ bool isOperator(string c)
 {
     if (c == "&" || 
         c == "|" ||
-        c == "^")
+        c == "^" ||
+        c == "~" )
     {
         return true;
     }
@@ -119,6 +120,15 @@ Symbol evaluate(const RulesTriggered& rt, Symbol op1, Symbol op2, Symbol oper)
     return oper.Evaluate(bOp1, bOp2);
 }
 
+Symbol evaluate(const RulesTriggered& rt, Symbol op1, Symbol oper)
+{
+    bool bOp1;
+    
+    bOp1 = getOperandValue(rt, op1);
+
+    return oper.Evaluate(bOp1);
+}
+
 bool isRuleChar(char c)
 {
     bool ret = false;
@@ -220,6 +230,11 @@ bool EvaluateRPN(const RulesTriggered& rt,
     for (auto x : rpn) {
         if (x.IsOperand()) {
             exec.push(x);
+        } else if (x.IsUnaryOperator()) {
+            Symbol op1 = exec.top();
+            exec.pop();
+            Symbol sres = evaluate(rt, op1, x);
+            exec.push(sres);
         } else if (x.IsOperator()) {
             Symbol op1 = exec.top();
             exec.pop();

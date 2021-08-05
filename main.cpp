@@ -17,9 +17,11 @@ int main()
     TestNew();
 
     TestAnd();
-    TestAndWithNot();
+    TestAndWithOperandNot();
     TestOr();
+    TestOrWithOperandNot();
     TestOrWithAnd();
+    TestUnaryNot();
 
     return 0;
 }
