@@ -9,7 +9,7 @@ class Symbol
 {
     public:
         enum STYPE {
-            Operand, NotOperand, NotOperator, TrueValue, FalseValue, Or, And, Xor
+            Operand, NotOperand, NotOperator, TrueValue, FalseValue, Or, And
         };
 
         void dump(std::stringstream& ss) const
@@ -37,9 +37,6 @@ class Symbol
                 case And:
                     ss << "And";
                     break;
-                case Xor:
-                    ss << "Xor";
-                    break;
             }
         }
     
@@ -61,8 +58,6 @@ class Symbol
                 mType = STYPE::Or;
             } else if (val == "&") {
                 mType = STYPE::And;
-            } else if (val == "^") {
-                mType = STYPE::Xor;
             } else if (val == "~") {
                 mType = STYPE::NotOperator;
             } else if (val[0] == '!') {
@@ -87,8 +82,6 @@ class Symbol
                     return Symbol(bOp1 || bOp2);
                 case STYPE::And:
                     return Symbol(bOp1 && bOp2);
-                case STYPE::Xor:
-                    return Symbol(bOp1 ^ bOp2);
             }
             return Symbol(false);
         }
@@ -107,7 +100,6 @@ class Symbol
         {
             if (mType == Or ||
                 mType == And ||
-                mType == Xor ||
                 mType == NotOperator)
             {
                 return true;

@@ -71,6 +71,9 @@ void TestAnd()
     ASSERT(Test("A&B",{{"A",true},{"B",false}},false));
     ASSERT(Test("A&B",{{"A",false},{"B",true}},false));
     ASSERT(Test("A&B",{{"A",false},{"B",false}},false));
+    ASSERT(Test("A&A",{{"A",true}},true));
+    ASSERT(Test("A&A",{{"A",false}},false));
+
     ASSERT(Test("A&B&C&D&E",{{"A",false},
                              {"B",false},
                              {"C",false},
@@ -228,6 +231,7 @@ void TestOrWithAnd()
 
 void TestUnaryNot()
 {
+    std::cout << __func__ << std::endl;
     ASSERT(Test("~(A&B)",{{"A",true},{"B",true}},false));
     ASSERT(Test("~(A&B)",{{"A",false},{"B",true}},true));
     ASSERT(Test("~(A&B)",{{"A",true},{"B",false}},true));
@@ -249,4 +253,16 @@ void TestUnaryNot()
                                      true));
     // Not really the intended use but works
     ASSERT(Test("~A|~B",{{"A",true},{"B",true}},false));
+
+    ASSERT(Test("(A|B|C)&(~(D))", {{"A",true},
+                                   {"B",false},
+                                   {"C",false},
+                                   {"D",true}}, false));
+
+    ASSERT(Test("(A|B|C)&(~(D))", {{"A",true},
+                                   {"B",false},
+                                   {"C",false},
+                                   {"D",false}}, true));
+
 }
+
