@@ -21,6 +21,7 @@ int main()
     TestOr();
     TestOrWithOperandNot();
     TestOrWithAnd();
+    TestOperndNotOrWithAnd();
     TestUnaryNot();
 
     return 0;

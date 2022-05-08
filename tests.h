@@ -10,5 +10,6 @@ void TestAndWithOperandNot();
 void TestOr();
 void TestOrWithOperandNot();
 void TestOrWithAnd();
+void TestOperndNotOrWithAnd();
 void TestUnaryNot();
 

@@ -13,25 +13,46 @@ class RulesTriggered
                 SetTrigger(p.first, p.second);
             }    
         }
-        void SetTrigger(const std::string& rule, bool v)
+        RulesTriggered(const std::map<uint16_t,bool> rulesAndTriggers)
         {
-            mTriggers.insert({rule, v}); 
+            for (auto& p : rulesAndTriggers) {
+                SetTrigger(p.first, p.second);
+            }    
         }
 
-        void SetTrigger(const std::string& rule)
+        void SetTrigger(uint16_t id, bool v)
         {
-            mTriggers.insert({rule, true});
+            mTriggers.insert({id, v}); 
         }
 
-        void SetNoTrigger(const std::string& rule)
+
+        void SetTrigger(const std::string& ruleId, bool v)
         {
-            mTriggers.insert({rule, false});
+            uint16_t id = std::stoul(ruleId, nullptr, 16);
+
+            mTriggers.insert({id, v}); 
         }
 
-        bool CheckTrigger(const std::string& rule) const
+        void SetTrigger(const std::string& ruleId)
         {
+            uint16_t id = std::stoul(ruleId, nullptr, 16);
+
+            mTriggers.insert({id, true});
+        }
+
+        void SetNoTrigger(const std::string& ruleId)
+        {
+            uint16_t id = std::stoul(ruleId, nullptr, 16);
+
+            mTriggers.insert({id, false});
+        }
+
+        bool CheckTrigger(const std::string& ruleId) const
+        {
+            uint16_t id = std::stoul(ruleId, nullptr, 16);
+
             bool result = false;
-            auto it = mTriggers.find(rule);
+            auto it = mTriggers.find(id);
             if (it != mTriggers.end()) { 
                 result = it->second;
             }
@@ -39,5 +60,5 @@ class RulesTriggered
         }
 
     protected:
-        std::unordered_map<std::string, bool> mTriggers;
+        std::unordered_map<uint16_t, bool> mTriggers;
 };

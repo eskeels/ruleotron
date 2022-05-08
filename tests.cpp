@@ -204,6 +204,14 @@ void TestOrWithOperandNot()
                                {"E",false},
                                {"F",false}},true));
 
+    ASSERT(Test("A|B|C|D|E|!F",{{"A",false},
+                               {"B",false},
+                               {"C",false},
+                               {"D",false},
+                               {"E",false},
+                               {"F",true}},false));
+
+
     ASSERT(Test("!A|!B|!C|!D|!E|!F",{{"A",false},
                                {"B",false},
                                {"C",false},
@@ -229,6 +237,18 @@ void TestOrWithAnd()
     ASSERT(Test("(A|B)&(C|B)",{{"A",false},{"B",false},{"C",true}},false));
 }
 
+void TestOperndNotOrWithAnd()
+{
+    std::cout << __func__ << std::endl;
+    ASSERT(Test("(!A|B)&(A|B)",{{"A",true},{"B",true}},true));
+    ASSERT(Test("(!A|B)&(A|B)",{{"A",true},{"B",false}},false));
+
+    ASSERT(Test("(A|!B)&(C|B)",{{"A",true},{"B",true},{"C",true}},true));
+    ASSERT(Test("(A|B)&(!C|B)",{{"A",true},{"B",false},{"C",true}},false));
+    ASSERT(Test("(A|B)&(C|!B)",{{"A",false},{"B",true},{"C",true}},true));
+    ASSERT(Test("(!A|!B)&(!C|!B)",{{"A",false},{"B",false},{"C",true}},true));
+}
+
 void TestUnaryNot()
 {
     std::cout << __func__ << std::endl;
@@ -252,7 +272,9 @@ void TestUnaryNot()
                                      {"D",false}},
                                      true));
     // Not really the intended use but works
-    ASSERT(Test("~A|~B",{{"A",true},{"B",true}},false));
+    ASSERT(Test("(~(A))|(~(B))",{{"A",true},{"B",true}},false));
+    ASSERT(Test("(~(A))|(~(B))",{{"A",true},{"B",false}},true));
+    ASSERT(Test("(~(A))|(~(B))",{{"A",false},{"B",true}},true));
 
     ASSERT(Test("(A|B|C)&(~(D))", {{"A",true},
                                    {"B",false},
